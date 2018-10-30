@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DutchTreat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,17 +16,23 @@ namespace DutchTreat
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<INullMailService, NullMailService>();
+
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}else
+            //{
+            //    app.UseExceptionHandler("/error");
+            //}
 
+            app.UseExceptionHandler("/error");
             /*
              * Es importante el orden de piezas en el middleware
              * En este caso:
@@ -53,7 +60,7 @@ namespace DutchTreat
              * Por ejemplo si tenemos el archivo index.html es uno de los que se considera default, si lo encuentra
              * entonces lo toma y lo pone como pagina startup
              */
-             //Lo sacmos al momento de implementar MVC porque esté se encarga del routeo de request
+            //Lo sacmos al momento de implementar MVC porque esté se encarga del routeo de request
             //app.UseDefaultFiles();
 
             //Habilitamos el webs server para que devuelva archivos estaticos al browser

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Dutch Treat: @ViewBag.Title</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Core Training v2 App</h1>
+        <menu>
+            <ul>
+                <li><a asp-controller="App" asp-action="Index">Home</a></li>
+                <li><a asp-controller="App" asp-action="Contact">Contact</a></li>
+                <li><a asp-controller="App" asp-action="About">About</a></li>
+            </ul>
+        </menu>
+    </header>
+    <div>
+        @RenderBody()
+    </div>
+    <script src="~/js/index.js"></script>
+    <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+
+    @RenderSection("Scripts", false)
+
+    <footer>
+        <p>Footer</p>
+    </footer>
+</body>
+</html>
