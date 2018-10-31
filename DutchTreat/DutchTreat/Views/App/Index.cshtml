@@ -2,8 +2,21 @@
     ViewBag.Title = "Home Page!";
 }
 
-
-<h2> @ViewBag.Title</h2>
-<p>Hello World!</p>
-<p>MVC Page!</p>
-
+<div class="row">
+    <div class="col-md-6">
+        <div class="product-info">
+            <img src="~/img/artistImage.jpg" />
+            <h3>New Zealand</h3>
+            <ul>
+                <li>Price $9.99</li>
+                <li>Artist: Mister X</li>
+                <li>Title: </li>
+                <li>Description: NZ Landscape</li>
+            </ul>
+            <button id="buyButton" class="btn btn-success">Buy</button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <p>Great landscape!</p>
+    </div>
+</div>
