@@ -12,15 +12,16 @@ namespace DutchTreat.Controllers
     public class AppController : Controller
     {
         private INullMailService _nullMailService;
-        private DutchContext _context;
+        private IDutchRepository _repository;
 
-        public AppController(INullMailService nullMailService, DutchContext context)
+        public AppController(INullMailService nullMailService, IDutchRepository repository)
         {
             _nullMailService = nullMailService;
-            _context = context;
+            _repository = repository;
         }
         public IActionResult Index()
         {
+            var results = _repository.GetAllProducts();
             return View();
         }
 
@@ -61,8 +62,7 @@ namespace DutchTreat.Controllers
 
         public IActionResult Shop()
         {
-            var results = _context.Products.OrderBy(p => p.Category)
-                                           .ToList();
+            var results = _repository.GetAllProducts();
 
             return View(results);
         }
