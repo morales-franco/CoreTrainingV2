@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using DutchTreat.Data;
 using DutchTreat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace DutchTreat
 {
@@ -31,26 +34,35 @@ namespace DutchTreat
                 cfg.UseSqlServer(_configuration.GetConnectionString("DutchConnectionString"));
             });
 
+            services.AddAutoMapper();
+
             services.AddTransient<INullMailService, NullMailService>();
             services.AddTransient<DutchSeeder>();
 
             services.AddScoped<IDutchRepository, DutchRepository>();
 
-            services.AddMvc();
+            services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .AddJsonOptions(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            /*AddJsonOptions configuramos que al serializar un objeto que se autoreferencia NO entre en una referencia circular:
+             Order tiene una collection de ICollection<OrderItem> Items
+             y OrderItem tiene su Order asociada --> Explota! le tenemos q decir al framework que no serializa las autoreferencias.
+             */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}else
-            //{
-            //    app.UseExceptionHandler("/error");
-            //}
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
 
-            app.UseExceptionHandler("/error");
+
             /*
              * Es importante el orden de piezas en el middleware
              * En este caso:

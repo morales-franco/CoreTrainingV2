@@ -1,22 +1,27 @@
-﻿@{
+﻿@model IEnumerable<Product>
+@{
     ViewBag.Title = "Home Page!";
 }
+<h1>Shop</h1>
+<p>Count @Model.Count()</p>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="product-info">
-            <img src="~/img/artistImage.jpg" />
-            <h3>New Zealand</h3>
-            <ul>
-                <li>Price $9.99</li>
-                <li>Artist: Mister X</li>
-                <li>Title: </li>
-                <li>Description: NZ Landscape</li>
-            </ul>
-            <button id="buyButton" class="btn btn-success">Buy</button>
+    @foreach (var product in Model)
+    {
+        <div class="col-md-3">
+            <div class="border bg-light rounded p-1">
+                <img src="~/img/@(product.ArtId).jpg" class="img-fluid" alt="@product.ArtDescription"/>
+                <h3>@product.Category - @product.Size</h3>
+                <ul>
+                    <li>Price $@product.Price</li>
+                    <li>Artist: @product.Artist</li>
+                    <li>Title: @product.Title</li>
+                    <li>Description: @product.ArtDescription</li>
+                </ul>
+                <button id="buyButton" class="btn btn-success">Buy</button>
+            </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <p>Great landscape!</p>
-    </div>
+    }
 </div>
+
+

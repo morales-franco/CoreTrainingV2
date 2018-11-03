@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DutchTreat.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DutchTreat.Data
 {
@@ -8,5 +9,8 @@ namespace DutchTreat.Data
         IEnumerable<Product> GetAllProducts();
         IEnumerable<Product> GetAllProductsByCategory(string category);
         bool SaveAll();
+        IEnumerable<Order> GetAllOrders();
+        Order GetOrderById(int id);
+        void AddEntity(Order model);
     }
 }
