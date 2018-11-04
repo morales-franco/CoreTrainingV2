@@ -21,12 +21,17 @@ namespace DutchTreat.Data
             _context.Orders.Add(model);
         }
 
-        public IEnumerable<Order> GetAllOrders()
+        public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
-            return _context.Orders
-                .Include(o => o.Items)
-                .ThenInclude(i => i.Product) //Equivalent at: Include("Items.Product")
-                .OrderBy(p => p.OrderDate)
+            if (includeItems)
+                return _context.Orders
+                    .Include(o => o.Items)
+                    .ThenInclude(i => i.Product) //Equivalent at: Include("Items.Product")
+                    .OrderBy(o => o.OrderDate)
+                    .ToList();
+            else
+                return _context.Orders
+                .OrderBy(o => o.OrderDate)
                 .ToList();
         }
 
@@ -50,7 +55,7 @@ namespace DutchTreat.Data
             return _context.Orders
                 .Include(o => o.Items)
                 .ThenInclude(i => i.Product)
-                .Where(o => o.Id == id )
+                .Where(o => o.Id == id)
                 .FirstOrDefault();
         }
 
