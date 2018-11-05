@@ -9,11 +9,32 @@ using DutchTreat.ViewModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace DutchTreat.Controllers.Api
 {
+    /*
+     * For test
+     * 1) Generate TOken
+     * http://localhost:8888/account/CreateToken
+     * Body:{
+	 * "username" : "admin",
+	 * "password" : "Pa$$Word123456"
+     * }
+     * 
+     * Then copy the TOKEN_GENERATED.
+     * 
+     * 2) Use the token for request
+     * http://localhost:8888/api/orders
+     * Headers:
+     * Key: Authorization
+     * Value: Bearer TOKEN_GENERATED
+     * 
+     * Note: If you don't use the access token for get resources the operation will fail (401 unauthorized).
+     */
+
     [Route("api/[controller]")]
     [ApiController]
     //Especificamos que este Api controller NO va a usar auth por cookies (Realmente inseguro para Api's) sino que va a usar JWT
@@ -23,12 +44,17 @@ namespace DutchTreat.Controllers.Api
         private IDutchRepository _repository;
         private ILogger<OrdersController> _logger;
         private IMapper _mapper;
+        private UserManager<StoreUser> _userManager;
 
-        public OrdersController(IDutchRepository repository, ILogger<OrdersController> logger, IMapper mapper)
+        public OrdersController(IDutchRepository repository, 
+            ILogger<OrdersController> logger, 
+            IMapper mapper,
+            UserManager<StoreUser> userManager)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -36,7 +62,9 @@ namespace DutchTreat.Controllers.Api
         {
             try
             {
-                var orders = _repository.GetAllOrders(includeItems);
+                var username = User.Identity.Name;
+
+                var orders = _repository.GetAllOrdersByUser(includeItems, username);
                 return Ok(_mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(orders));
             }
             catch (Exception ex)
@@ -51,7 +79,7 @@ namespace DutchTreat.Controllers.Api
         {
             try
             {
-                var order = _repository.GetOrderById(id);
+                var order = _repository.GetOrderById(User.Identity.Name,id);
 
                 if (order == null)
                     return NotFound();
@@ -66,7 +94,7 @@ namespace DutchTreat.Controllers.Api
         }
 
         [HttpPost]
-        public ActionResult<Order> Post([FromBody] OrderVM model)
+        public async Task<ActionResult<Order>> Post([FromBody] OrderVM model)
         {
             try
             {
@@ -76,6 +104,11 @@ namespace DutchTreat.Controllers.Api
 
                     if (entity.OrderDate == DateTime.MinValue)
                         entity.OrderDate = DateTime.Now;
+
+                    //User es una representación de claims del user--> NO el storeUser de la BD
+
+                    var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+                    entity.User = currentUser;
 
                     _repository.AddEntity(entity);
                     if (_repository.SaveAll())

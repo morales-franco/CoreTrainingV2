@@ -46,8 +46,8 @@ namespace DutchTreat
                 {
                     cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        ValidIssuer = _configuration["Token:Issuer"],
-                        ValidAudience = _configuration["Token:Audience"],
+                        ValidIssuer = _configuration["Tokens:Issuer"],
+                        ValidAudience = _configuration["Tokens:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]))
                     };
                 });
