@@ -6,6 +6,8 @@ using AutoMapper;
 using DutchTreat.Data;
 using DutchTreat.Data.Entities;
 using DutchTreat.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +16,8 @@ namespace DutchTreat.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    //Especificamos que este Api controller NO va a usar auth por cookies (Realmente inseguro para Api's) sino que va a usar JWT
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrdersController : ControllerBase
     {
         private IDutchRepository _repository;

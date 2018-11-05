@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DutchTreat.Data;
+using DutchTreat.Data.Entities;
 using DutchTreat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace DutchTreat
@@ -29,7 +33,26 @@ namespace DutchTreat
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DutchContext>(cfg => 
+            //Configuramos Identity
+            services.AddIdentity<StoreUser, IdentityRole>(cfg =>
+           {
+               cfg.User.RequireUniqueEmail = true;
+           }).AddEntityFrameworkStores<DutchContext>();
+
+            //Configuramos tokens
+            services.AddAuthentication()
+                .AddCookie()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        ValidIssuer = _configuration["Token:Issuer"],
+                        ValidAudience = _configuration["Token:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]))
+                    };
+                });
+
+            services.AddDbContext<DutchContext>(cfg =>
             {
                 cfg.UseSqlServer(_configuration.GetConnectionString("DutchConnectionString"));
             });
@@ -111,6 +134,9 @@ namespace DutchTreat
             //    //Pongamos la URL que sea retorna esto
             //    await context.Response.WriteAsync("<html><body><h1>Hello World!</h1></body></html>");
             //});
+
+            //Habilitamos Auth --> Before MVC!
+            app.UseAuthentication();
 
             app.UseMvc(cfg =>
             {

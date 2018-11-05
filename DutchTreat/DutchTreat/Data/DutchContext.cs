@@ -1,4 +1,5 @@
 ﻿using DutchTreat.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace DutchTreat.Data
 {
-    public class DutchContext: DbContext
+    //public class DutchContext: DbContext --> Elimino porque Agrego Identity -->Uso:IdentityDbContext
+    public class DutchContext : IdentityDbContext<StoreUser>
     {
         public DutchContext(DbContextOptions<DutchContext> options) : base(options)
         {
