@@ -1,0 +1,13 @@
+export interface IProduct{
+    id: number;
+    category: string;
+    size: string;
+    price: number;
+    title: string;
+    artDescription: string;
+    artId: string;
+    artist: string;
+    artistBirthDate: Date;
+    artistDeathDate: Date;
+    artistNationality: string;
+}
