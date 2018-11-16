@@ -128,5 +128,16 @@ namespace DutchTreat.Controllers.Api
 
             return BadRequest("Failed to save a new order");
         }
+
+
+        [HttpPost, Route("buy")]
+        public IActionResult Buy(BuyVM model)
+        {
+            if (model != null)
+                return Ok(true);
+            else
+                return Ok(false);
+        }
+
     }
 }
